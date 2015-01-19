@@ -45,7 +45,7 @@ Useful for creating an event subscription to be used with `GoodSqueeze.filter` i
 
 Returns `true` if the supplied `data.event` + `data.tags` should be reported based on `subscription` where:
 
-`subscription` - a subscription map created by `GoodSqueeze.subscription()`.
-`data` - event object emitted from good/hapi which should contain the following keys:
+- `subscription` - a subscription map created by `GoodSqueeze.subscription()`.
+- `data` - event object emitted from good/hapi which should contain the following keys:
     - `event` - a string representing the event name of `data`
     - `tags` - an array of strings representing tags associated with this event.
