@@ -173,4 +173,27 @@ describe('GoodSqueeze', function () {
             done();
           }, 500);
     });
+
+    it('throws an error if "events" not a truthy object', function (done) {
+
+        expect(function() {
+
+            var stream = GoodSqueeze(null);
+        }).to.throw('events must be specified');
+        expect(function() {
+
+            var stream = GoodSqueeze(false);
+        }).to.throw('events must be specified');
+
+        done();
+    });
+
+    it('throws an error if "events" does not have any keys', function (done) {
+        expect(function() {
+
+            var stream = GoodSqueeze({});
+        }).to.throw('events must have at least one subscription');
+
+        done();
+    });
 });
