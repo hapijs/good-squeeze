@@ -1,6 +1,6 @@
 {
   "name": "good-squeeze",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Transform stream for filtering events from good.",
   "main": "index.js",
   "scripts": {
