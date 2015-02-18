@@ -241,7 +241,32 @@ describe('SafeJson', function () {
         read.pipe(stream);
 
         read.push(data);
-        read.push({ foo:'bar' });
+        read.push({ foo: 'bar' });
+        read.push(null);
+    });
+
+    it('adds a seperator value when specified', function (done) {
+
+        var stream = SafeJson({}, { separator: '#' });
+        var result = '';
+        var read = new Stream.Readable({ objectMode: true });
+        read._read = Hoek.ignore;
+
+        stream.on('data', function (data) {
+
+            result += data;
+        });
+
+        stream.on('end', function() {
+
+            expect(result).to.equal('{"foo":"bar"}#{"bar":"baz"}#');
+            done();
+        });
+
+        read.pipe(stream);
+
+        read.push({ foo: 'bar' });
+        read.push({ bar: 'baz' });
         read.push(null);
     });
 });
