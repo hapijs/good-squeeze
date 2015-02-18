@@ -6,14 +6,15 @@ var Code = require('code');
 var Hoek = require('hoek');
 var Lab = require('lab');
 
-var GoodSqueeze = require('..');
+var Squeeze = require('..').Squeeze;
+var SafeJson = require('..').SafeJson;
 
 var lab = exports.lab = Lab.script();
 var expect = Code.expect;
 var describe = lab.describe;
 var it = lab.it;
 
-describe('GoodSqueeze', function () {
+describe('Squeeze', function () {
 
     describe('subscription()', function () {
 
@@ -22,7 +23,7 @@ describe('GoodSqueeze', function () {
             var tags = ['*', null, undefined, false, 0];
             for (var i = 0, il = tags.length; i < il; ++i) {
 
-                var result = GoodSqueeze.subscription({ error: tags[i] });
+                var result = Squeeze.subscription({ error: tags[i] });
 
                 expect(result.error).to.deep.equal([]);
             }
@@ -31,7 +32,7 @@ describe('GoodSqueeze', function () {
 
         it('converts a single tag to an array', function (done) {
 
-            var result = GoodSqueeze.subscription({ error: 'hapi' });
+            var result = Squeeze.subscription({ error: 'hapi' });
             expect(result.error).to.deep.equal(['hapi']);
             done();
         });
@@ -41,71 +42,71 @@ describe('GoodSqueeze', function () {
 
         it('returns true if this reporter should report this event type', function (done) {
 
-            var subscription = GoodSqueeze.subscription({ log: '*' });
-            expect(GoodSqueeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'error', 'hapi'] })).to.be.true();
+            var subscription = Squeeze.subscription({ log: '*' });
+            expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'error', 'hapi'] })).to.be.true();
             done();
         });
 
         it('returns false if this report should not report this event type', function (done) {
 
-            var subscription = GoodSqueeze.subscription({ log: '*' });
-            expect(GoodSqueeze.filter(subscription, { event: 'ops', tags: ['*'] })).to.be.false();
+            var subscription = Squeeze.subscription({ log: '*' });
+            expect(Squeeze.filter(subscription, { event: 'ops', tags: ['*'] })).to.be.false();
             done();
         });
 
         it('returns true if the event is matched, but there are not any tags with the data', function (done) {
 
-            var subscription = GoodSqueeze.subscription({ log: '*' });
-            expect(GoodSqueeze.filter(subscription, { event: 'log' })).to.be.true();
+            var subscription = Squeeze.subscription({ log: '*' });
+            expect(Squeeze.filter(subscription, { event: 'log' })).to.be.true();
             done();
         });
 
         it('returns false if the subscriber has tags, but the matched event does not have any', function (done) {
 
-            var subscription = GoodSqueeze.subscription({ error: 'db' });
-            expect(GoodSqueeze.filter(subscription, { event: 'error', tags: [] })).to.be.false();
+            var subscription = Squeeze.subscription({ error: 'db' });
+            expect(Squeeze.filter(subscription, { event: 'error', tags: [] })).to.be.false();
             done();
         });
 
         it('returns true if the event and tag match', function (done) {
 
-            var subscription = GoodSqueeze.subscription({ error: ['high', 'medium', 'log'] });
-            expect(GoodSqueeze.filter(subscription, { event: 'error', tags: ['hapi', 'high', 'db', 'severe'] })).to.be.true();
+            var subscription = Squeeze.subscription({ error: ['high', 'medium', 'log'] });
+            expect(Squeeze.filter(subscription, { event: 'error', tags: ['hapi', 'high', 'db', 'severe'] })).to.be.true();
             done();
         });
 
         it('returns false by default', function (done) {
 
-            var subscription = GoodSqueeze.subscription({ request: 'hapi' });
-            expect(GoodSqueeze.filter(subscription, {event: 'request' })).to.be.false();
+            var subscription = Squeeze.subscription({ request: 'hapi' });
+            expect(Squeeze.filter(subscription, {event: 'request' })).to.be.false();
             done();
         });
 
         it('returns false if "tags" is not an array', function (done) {
 
-            var subscription = GoodSqueeze.subscription({ request: 'hapi' });
-            expect(GoodSqueeze.filter(subscription, {event: 'request', tags: 'hapi' })).to.be.false();
+            var subscription = Squeeze.subscription({ request: 'hapi' });
+            expect(Squeeze.filter(subscription, {event: 'request', tags: 'hapi' })).to.be.false();
             done();
         });
     });
 
     it('allows construction with "new"', function (done) {
 
-        var stream = new GoodSqueeze({ request: '*' });
+        var stream = new Squeeze({ request: '*' });
         expect(stream._good.subscription).to.have.length(1);
         done();
     });
 
     it('allows construction without "new"', function (done) {
 
-        var stream = GoodSqueeze({ request: '*', ops: '*' });
+        var stream = Squeeze({ request: '*', ops: '*' });
         expect(stream._good.subscription).to.have.length(2);
         done();
     });
 
     it('does not forward events if "filter()" is false', function (done) {
 
-        var stream = GoodSqueeze({ request: '*' });
+        var stream = Squeeze({ request: '*' });
         var result = [];
 
         stream.on('data', function (data) {
@@ -134,7 +135,7 @@ describe('GoodSqueeze', function () {
 
     it('remains open as long as the read stream does not end it', function (done) {
 
-        var stream = GoodSqueeze({ request: '*' });
+        var stream = Squeeze({ request: '*' });
         var result = [];
 
         stream.on('data', function (data) {
@@ -178,11 +179,11 @@ describe('GoodSqueeze', function () {
 
         expect(function() {
 
-            var stream = GoodSqueeze(null);
+            var stream = Squeeze(null);
         }).to.throw('events must be specified');
         expect(function() {
 
-            var stream = GoodSqueeze(false);
+            var stream = Squeeze(false);
         }).to.throw('events must be specified');
 
         done();
@@ -191,9 +192,56 @@ describe('GoodSqueeze', function () {
     it('throws an error if "events" does not have any keys', function (done) {
         expect(function() {
 
-            var stream = GoodSqueeze({});
+            var stream = Squeeze({});
         }).to.throw('events must have at least one subscription');
 
         done();
+    });
+});
+
+describe('SafeJson', function () {
+
+    it('allows construction with "new"', function (done) {
+
+        var stream = new SafeJson();
+        expect(stream).to.exist();
+        done();
+    });
+
+    it('allows construction without "new"', function (done) {
+
+        var stream = SafeJson();
+        expect(stream).to.exist();
+        done();
+    });
+
+    it('safely handles circular references in incoming data', function (done) {
+
+        var stream = SafeJson();
+        var result = '';
+        var read = new Stream.Readable({ objectMode: true });
+        read._read = Hoek.ignore;
+
+        var data = {
+            x: 1
+        };
+        data.y = data;
+
+        stream.on('data', function (data) {
+
+            result += data;
+        });
+
+        stream.on('end', function() {
+
+            expect(result).to.equal('{"x":1,"y":"[Circular ~]"}{"foo":"bar"}');
+            done();
+        });
+
+        read.pipe(stream);
+
+        read.push(data);
+        read.push({ foo:'bar' });
+        read.push(null);
     });
 });

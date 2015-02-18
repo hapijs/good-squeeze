@@ -19,7 +19,8 @@
   ],
   "homepage": "https://github.com/hapijs/good-squeeze",
   "dependencies": {
-    "hoek": "2.x.x"
+    "hoek": "2.x.x",
+    "json-stringify-safe": "5.0.x"
   },
   "devDependencies": {
     "code": "1.x.x",
