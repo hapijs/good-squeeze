@@ -2,7 +2,7 @@
   "name": "good-squeeze",
   "version": "2.0.1",
   "description": "Transform stream for filtering events from good.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "lab -m 5000 -t 100 -v -La code",
     "test-cov-html": "lab -m 5000 -r html -o coverage.html -La code"
@@ -11,12 +11,7 @@
     "type": "git",
     "url": "https://github.com/hapijs/good-squeeze.git"
   },
-  "licenses": [
-    {
-      "type": "BSD",
-      "url": "http://github.com/hapijs/good/raw/master/LICENSE"
-    }
-  ],
+  "license": "BSD-3-Clause",
   "homepage": "https://github.com/hapijs/good-squeeze",
   "dependencies": {
     "hoek": "2.x.x",
