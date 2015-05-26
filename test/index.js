@@ -172,29 +172,28 @@ describe('Squeeze', function () {
                 { event: 'request', id: 4}
             ]);
             done();
-          }, 500);
+        }, 500);
     });
 
     it('throws an error if "events" not a truthy object', function (done) {
 
-        expect(function() {
+        expect(function () {
 
-            var stream = Squeeze(null);
-        }).to.throw('events must be specified');
-        expect(function() {
+            var stream = Squeeze('request');
+        }).to.throw('events must be an object');
+        expect(function () {
 
-            var stream = Squeeze(false);
-        }).to.throw('events must be specified');
+            var stream = Squeeze(1);
+        }).to.throw('events must be an object');
 
         done();
     });
 
-    it('throws an error if "events" does not have any keys', function (done) {
-        expect(function() {
+    it('allows empty event arguments', function (done) {
 
-            var stream = Squeeze({});
-        }).to.throw('events must have at least one subscription');
+        var stream = Squeeze(null);
 
+        expect(stream._good.subscription).to.deep.equal(Object.create(null));
         done();
     });
 });
@@ -232,7 +231,7 @@ describe('SafeJson', function () {
             result += data;
         });
 
-        stream.on('end', function() {
+        stream.on('end', function () {
 
             expect(result).to.equal('{"x":1,"y":"[Circular ~]"}{"foo":"bar"}');
             done();
@@ -257,7 +256,7 @@ describe('SafeJson', function () {
             result += data;
         });
 
-        stream.on('end', function() {
+        stream.on('end', function () {
 
             expect(result).to.equal('{"foo":"bar"}#{"bar":"baz"}#');
             done();
