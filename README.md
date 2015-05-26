@@ -13,11 +13,11 @@ good-squeeze is a collection of small transform streams useful in custom good re
 
 ## Methods
 
-### `Squeeze(events, [options])`
+### `Squeeze([events], [options])`
 
 Creates a new Squeeze transform stream where:
 
-- `events` an object where each key is a valid good event, and the value is a string or array of strings representing event tags. "\*" indicates no filtering. `null` and `undefined` are assumed to be "\*".
+- `events` an object where each key is a valid good event, and the value is a string or array of strings representing event tags. "\*" indicates no filtering. `null` and `undefined` are assumed to be "\*". Defaults to `{}`
 - `options` an optional configuration object that gets passed to the Node [`Stream.Transform`](http://nodejs.org/api/stream.html#stream_class_stream_transform) constructor. **Note** `objectMode` is always `true` for all `Squeeze` objects.
 
 The transform stream only passes on events that satisfy the event filtering based on event name and tags. If the upstream event doesn't satisfy the filter, it is not continued down the pipe line.
