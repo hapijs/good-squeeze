@@ -78,14 +78,14 @@ describe('Squeeze', function () {
         it('returns false by default', function (done) {
 
             var subscription = Squeeze.subscription({ request: 'hapi' });
-            expect(Squeeze.filter(subscription, {event: 'request' })).to.be.false();
+            expect(Squeeze.filter(subscription, { event: 'request' })).to.be.false();
             done();
         });
 
         it('returns false if "tags" is not an array', function (done) {
 
             var subscription = Squeeze.subscription({ request: 'hapi' });
-            expect(Squeeze.filter(subscription, {event: 'request', tags: 'hapi' })).to.be.false();
+            expect(Squeeze.filter(subscription, { event: 'request', tags: 'hapi' })).to.be.false();
             done();
         });
     });
@@ -109,9 +109,9 @@ describe('Squeeze', function () {
         var stream = Squeeze({ request: '*' });
         var result = [];
 
-        stream.on('data', function (data) {
+        stream.on('data', function (chunk) {
 
-            result.push(data);
+            result.push(chunk);
         });
 
         stream.on('end', function () {
@@ -128,7 +128,7 @@ describe('Squeeze', function () {
 
         read.pipe(stream);
 
-        read.push({ event: 'request', id: 1});
+        read.push({ event: 'request', id: 1 });
         read.push({ event: 'ops', id: 2 });
         read.push(null);
     });
@@ -138,9 +138,9 @@ describe('Squeeze', function () {
         var stream = Squeeze({ request: '*' });
         var result = [];
 
-        stream.on('data', function (data) {
+        stream.on('data', function (chunk) {
 
-            result.push(data);
+            result.push(chunk);
         });
 
         stream.on('end', function () {
@@ -157,19 +157,19 @@ describe('Squeeze', function () {
 
         read.pipe(stream);
 
-        read.push({ event: 'request', id: 1});
+        read.push({ event: 'request', id: 1 });
         read.push({ event: 'request', id: 2 });
 
         setTimeout(function () {
 
-            read.push({ event: 'request', id: 3});
-            read.push({ event: 'request', id: 4});
+            read.push({ event: 'request', id: 3 });
+            read.push({ event: 'request', id: 4 });
 
             expect(result).to.deep.equal([
-                { event: 'request', id: 1},
-                { event: 'request', id: 2},
-                { event: 'request', id: 3},
-                { event: 'request', id: 4}
+                { event: 'request', id: 1 },
+                { event: 'request', id: 2 },
+                { event: 'request', id: 3 },
+                { event: 'request', id: 4 }
             ]);
             done();
         }, 500);
@@ -226,9 +226,9 @@ describe('SafeJson', function () {
         };
         data.y = data;
 
-        stream.on('data', function (data) {
+        stream.on('data', function (chunk) {
 
-            result += data;
+            result += chunk;
         });
 
         stream.on('end', function () {
@@ -251,9 +251,9 @@ describe('SafeJson', function () {
         var read = new Stream.Readable({ objectMode: true });
         read._read = Hoek.ignore;
 
-        stream.on('data', function (data) {
+        stream.on('data', function (chunk) {
 
-            result += data;
+            result += chunk;
         });
 
         stream.on('end', function () {
