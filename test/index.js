@@ -1,120 +1,116 @@
+'use strict';
+
 // Load modules
 
-var Stream = require('stream');
+const Stream = require('stream');
 
-var Code = require('code');
-var Hoek = require('hoek');
-var Lab = require('lab');
+const Code = require('code');
+const Lab = require('lab');
 
-var Squeeze = require('..').Squeeze;
-var SafeJson = require('..').SafeJson;
+const Squeeze = require('..').Squeeze;
+const SafeJson = require('..').SafeJson;
 
-var lab = exports.lab = Lab.script();
-var expect = Code.expect;
-var describe = lab.describe;
-var it = lab.it;
+const lab = exports.lab = Lab.script();
+const expect = Code.expect;
+const describe = lab.describe;
+const it = lab.it;
 
-describe('Squeeze', function () {
+const internals = {
+    readStream() {
 
-    describe('subscription()', function () {
+        const stream = new Stream.Readable({ objectMode: true });
+        stream._read = () => {};
+        return stream;
+    }
+};
 
-        it('converts *, null, undefined, 0, and false to an empty array, indicating all tags are acceptable', function (done) {
+describe('Squeeze', () => {
 
-            var tags = ['*', null, undefined, false, 0];
-            for (var i = 0, il = tags.length; i < il; ++i) {
+    describe('subscription()', () => {
 
-                var result = Squeeze.subscription({ error: tags[i] });
+        it('converts *, null, undefined, 0, and false to an empty array, indicating all tags are acceptable', { plan: 5 }, (done) => {
+
+            const tags = ['*', null, undefined, false, 0];
+            for (let i = 0; i < tags.length; ++i) {
+
+                const result = Squeeze.subscription({ error: tags[i] });
 
                 expect(result.error).to.deep.equal([]);
             }
             done();
         });
 
-        it('converts a single tag to an array', function (done) {
+        it('converts a single tag to an array', { plan: 1 }, (done) => {
 
-            var result = Squeeze.subscription({ error: 'hapi' });
+            const result = Squeeze.subscription({ error: 'hapi' });
             expect(result.error).to.deep.equal(['hapi']);
             done();
         });
     });
 
-    describe('filter()', function () {
+    describe('filter()', () => {
 
-        it('returns true if this reporter should report this event type', function (done) {
+        it('returns true if this reporter should report this event type', { plan: 1 }, (done) => {
 
-            var subscription = Squeeze.subscription({ log: '*' });
+            const subscription = Squeeze.subscription({ log: '*' });
             expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'error', 'hapi'] })).to.be.true();
             done();
         });
 
-        it('returns false if this report should not report this event type', function (done) {
+        it('returns false if this report should not report this event type', { plan: 1 }, (done) => {
 
-            var subscription = Squeeze.subscription({ log: '*' });
+            const subscription = Squeeze.subscription({ log: '*' });
             expect(Squeeze.filter(subscription, { event: 'ops', tags: ['*'] })).to.be.false();
             done();
         });
 
-        it('returns true if the event is matched, but there are not any tags with the data', function (done) {
+        it('returns true if the event is matched, but there are not any tags with the data', { plan: 1 }, (done) => {
 
-            var subscription = Squeeze.subscription({ log: '*' });
+            const subscription = Squeeze.subscription({ log: '*' });
             expect(Squeeze.filter(subscription, { event: 'log' })).to.be.true();
             done();
         });
 
-        it('returns false if the subscriber has tags, but the matched event does not have any', function (done) {
+        it('returns false if the subscriber has tags, but the matched event does not have any', { plan: 1 }, (done) => {
 
-            var subscription = Squeeze.subscription({ error: 'db' });
+            const subscription = Squeeze.subscription({ error: 'db' });
             expect(Squeeze.filter(subscription, { event: 'error', tags: [] })).to.be.false();
             done();
         });
 
-        it('returns true if the event and tag match', function (done) {
+        it('returns true if the event and tag match', { plan: 1 }, (done) => {
 
-            var subscription = Squeeze.subscription({ error: ['high', 'medium', 'log'] });
+            const subscription = Squeeze.subscription({ error: ['high', 'medium', 'log'] });
             expect(Squeeze.filter(subscription, { event: 'error', tags: ['hapi', 'high', 'db', 'severe'] })).to.be.true();
             done();
         });
 
-        it('returns false by default', function (done) {
+        it('returns false by default', { plan: 1 }, (done) => {
 
-            var subscription = Squeeze.subscription({ request: 'hapi' });
+            const subscription = Squeeze.subscription({ request: 'hapi' });
             expect(Squeeze.filter(subscription, { event: 'request' })).to.be.false();
             done();
         });
 
-        it('returns false if "tags" is not an array', function (done) {
+        it('returns false if "tags" is not an array', { plan: 1 }, (done) => {
 
-            var subscription = Squeeze.subscription({ request: 'hapi' });
+            const subscription = Squeeze.subscription({ request: 'hapi' });
             expect(Squeeze.filter(subscription, { event: 'request', tags: 'hapi' })).to.be.false();
             done();
         });
     });
 
-    it('allows construction with "new"', function (done) {
+    it('does not forward events if "filter()" is false', { plan: 1 }, (done) => {
 
-        var stream = new Squeeze({ request: '*' });
-        expect(stream._good.subscription).to.have.length(1);
-        done();
-    });
+        const stream = new Squeeze({ request: '*' });
+        const result = [];
 
-    it('allows construction without "new"', function (done) {
+        stream.on('data', (data) => {
 
-        var stream = Squeeze({ request: '*', ops: '*' });
-        expect(stream._good.subscription).to.have.length(2);
-        done();
-    });
-
-    it('does not forward events if "filter()" is false', function (done) {
-
-        var stream = Squeeze({ request: '*' });
-        var result = [];
-
-        stream.on('data', function (chunk) {
-
-            result.push(chunk);
+            result.push(data);
         });
 
-        stream.on('end', function () {
+        stream.on('end', () => {
 
             expect(result).to.deep.equal([{
                 event: 'request',
@@ -123,8 +119,7 @@ describe('Squeeze', function () {
             done();
         });
 
-        var read = new Stream.Readable({ objectMode: true });
-        read._read = Hoek.ignore;
+        const read = internals.readStream();
 
         read.pipe(stream);
 
@@ -133,34 +128,29 @@ describe('Squeeze', function () {
         read.push(null);
     });
 
-    it('remains open as long as the read stream does not end it', function (done) {
+    it('remains open as long as the read stream does not end it', { plan: 1 }, (done) => {
 
-        var stream = Squeeze({ request: '*' });
-        var result = [];
+        const stream = new Squeeze({ request: '*' });
+        const result = [];
 
-        stream.on('data', function (chunk) {
+        stream.on('data', (data) => {
 
-            result.push(chunk);
+            result.push(data);
         });
 
-        stream.on('end', function () {
+        stream.on('end', () => {
 
-            expect(result).to.deep.equal([{
-                event: 'request',
-                id: 1
-            }]);
-            done();
+            expect.fail('End should never be called');
         });
 
-        var read = new Stream.Readable({ objectMode: true });
-        read._read = Hoek.ignore;
+        const read = internals.readStream();
 
         read.pipe(stream);
 
         read.push({ event: 'request', id: 1 });
         read.push({ event: 'request', id: 2 });
 
-        setTimeout(function () {
+        setTimeout(() => {
 
             read.push({ event: 'request', id: 3 });
             read.push({ event: 'request', id: 4 });
@@ -175,63 +165,48 @@ describe('Squeeze', function () {
         }, 500);
     });
 
-    it('throws an error if "events" not a truthy object', function (done) {
+    it('throws an error if "events" not a truthy object', { plan: 2 }, (done) => {
 
-        expect(function () {
+        expect(() => {
 
-            var stream = Squeeze('request');
+            new Squeeze('request');
         }).to.throw('events must be an object');
-        expect(function () {
+        expect(() => {
 
-            var stream = Squeeze(1);
+            new Squeeze(1);
         }).to.throw('events must be an object');
 
         done();
     });
 
-    it('allows empty event arguments', function (done) {
+    it('allows empty event arguments', { plan: 1 }, (done) => {
 
-        var stream = Squeeze(null);
+        const stream = new Squeeze(null);
 
-        expect(stream._good.subscription).to.deep.equal(Object.create(null));
+        expect(stream._subscription).to.deep.equal(Object.create(null));
         done();
     });
 });
 
-describe('SafeJson', function () {
+describe('SafeJson', () => {
 
-    it('allows construction with "new"', function (done) {
+    it('safely handles circular references in incoming data', { plan: 1 }, (done) => {
 
-        var stream = new SafeJson();
-        expect(stream).to.exist();
-        done();
-    });
+        let result = '';
+        const stream = new SafeJson();
+        const read = internals.readStream();
 
-    it('allows construction without "new"', function (done) {
-
-        var stream = SafeJson();
-        expect(stream).to.exist();
-        done();
-    });
-
-    it('safely handles circular references in incoming data', function (done) {
-
-        var stream = SafeJson();
-        var result = '';
-        var read = new Stream.Readable({ objectMode: true });
-        read._read = Hoek.ignore;
-
-        var data = {
+        const message = {
             x: 1
         };
-        data.y = data;
+        message.y = message;
 
-        stream.on('data', function (chunk) {
+        stream.on('data', (data) => {
 
-            result += chunk;
+            result += data;
         });
 
-        stream.on('end', function () {
+        stream.on('end', () => {
 
             expect(result).to.equal('{"x":1,"y":"[Circular ~]"}{"foo":"bar"}');
             done();
@@ -239,24 +214,23 @@ describe('SafeJson', function () {
 
         read.pipe(stream);
 
-        read.push(data);
+        read.push(message);
         read.push({ foo: 'bar' });
         read.push(null);
     });
 
-    it('adds a seperator value when specified', function (done) {
+    it('adds a seperator value when specified', { plan: 1 }, (done) => {
 
-        var stream = SafeJson({}, { separator: '#' });
-        var result = '';
-        var read = new Stream.Readable({ objectMode: true });
-        read._read = Hoek.ignore;
+        let result = '';
+        const stream = new SafeJson({}, { separator: '#' });
+        const read = internals.readStream();
 
-        stream.on('data', function (chunk) {
+        stream.on('data', (data) => {
 
-            result += chunk;
+            result += data;
         });
 
-        stream.on('end', function () {
+        stream.on('end', () => {
 
             expect(result).to.equal('{"foo":"bar"}#{"bar":"baz"}#');
             done();
