@@ -9,16 +9,16 @@ Lead Maintainer: [Adam Bretz](https://github.com/arb)
 
 ## Usage
 
-good-squeeze is a collection of small transform streams useful in custom good reporter clients. The `Squeeze` stream is useful for filtering events based on the good event options. The `SafeJson` stream is useful for stringifying objects to prevent circular object errors.
+good-squeeze is a collection of small transform streams. The `Squeeze` stream is useful for filtering events based on the good event options. The `SafeJson` stream is useful for stringifying objects to prevent circular object errors.
 
 ## Methods
 
-### `Squeeze([events], [options])`
+### `Squeeze(events, [options])`
 
 Creates a new Squeeze transform stream where:
 
 - `events` an object where each key is a valid good event, and the value is a string or array of strings representing event tags. "\*" indicates no filtering. `null` and `undefined` are assumed to be "\*". Defaults to `{}`
-- `options` an optional configuration object that gets passed to the Node [`Stream.Transform`](http://nodejs.org/api/stream.html#stream_class_stream_transform) constructor. **Note** `objectMode` is always `true` for all `Squeeze` objects.
+- `[options]` configuration object that gets passed to the Node [`Stream.Transform`](http://nodejs.org/api/stream.html#stream_class_stream_transform) constructor. **Note** `objectMode` is always `true` for all `Squeeze` objects.
 
 The transform stream only passes on events that satisfy the event filtering based on event name and tags. If the upstream event doesn't satisfy the filter, it is not continued down the pipe line.
 
@@ -29,7 +29,7 @@ A static method on `Squeeze` that creates a new event subscription map where:
 - `events` an object where each key is a valid good event, and the value is a string or array of strings representing event tags. "*" indicates no filtering. `null` and `undefined` are assumed to be "*".
 
 ```js
-var Squeeze = require('good-squeeze');
+const Squeeze = require('good-squeeze');
 
 Squeeze.subscription({ log: 'user', ops: '*', request: ['hapi', 'foo'] });
 
@@ -53,10 +53,12 @@ Returns `true` if the supplied `data.event` + `data.tags` should be reported bas
     - `event` - a string representing the event name of `data`
     - `tags` - an array of strings representing tags associated with this event.
 
-### `SafeJson([options])`
+### `SafeJson([options], [stringify])`
 
 Creates a new SafeJson transform stream where:
 
-- `options` an optional configuration object that gets passed to the Node [`Stream.Transform`](http://nodejs.org/api/stream.html#stream_class_stream_transform) constructor. **Note** `objectMode` is always `true` for all `Squeeze` objects.
+- `[options]` configuration object that gets passed to the Node [`Stream.Transform`](http://nodejs.org/api/stream.html#stream_class_stream_transform) constructor. **Note** `objectMode` is always `true` for all `Squeeze` objects.
+- `[stringify]` configuration object for controlling how stringify is handled.
+    - `seperator` - string to append to each message. Defaults to "".
 
 The transform stream stringifys the incoming data and pipes it forward. It will not crash in the cases of circular references and will instead include a "~Circular" string in the result.
