@@ -208,7 +208,7 @@ describe('SafeJson', () => {
 
         stream.on('end', () => {
 
-            expect(result).to.equal('{"x":1,"y":"[Circular ~]"}{"foo":"bar"}');
+            expect(result).to.equal('{"x":1,"y":"[Circular]"}{"foo":"bar"}');
             done();
         });
 
