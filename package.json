@@ -1,6 +1,6 @@
 {
   "name": "good-squeeze",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "Collection of utility transform streams.",
   "main": "lib/index.js",
   "keywords": [
