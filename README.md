@@ -26,7 +26,7 @@ The transform stream only passes on events that satisfy the event filtering base
 
 A static method on `Squeeze` that creates a new event subscription map where:
 
-- `events` an object where each key is a valid good event, and the value is a string or array of strings representing event tags. "*" indicates no filtering. `null` and `undefined` are assumed to be "*".
+- `events` an object where each key is a valid good event, and the value is a string or array of strings representing event tags. "\*" indicates no filtering. `null` and `undefined` are assumed to be "\*".
 
 ```js
 const Squeeze = require('good-squeeze');
