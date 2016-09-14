@@ -53,6 +53,16 @@ describe('Squeeze', () => {
             done();
         });
 
+        it('converts an array to an include/exclude object', { plan: 1 }, (done) => {
+
+            const result = Squeeze.subscription({ error: ['hapi', 'error'] });
+            expect(result.error).to.deep.equal({
+                include: ['hapi', 'error'],
+                exclude: []
+            });
+            done();
+        });
+
         it('adds excluded tags to exclude array in map', (done) => {
 
             const result = Squeeze.subscription({ error: { exclude: ['sensitive'] } });
