@@ -28,14 +28,17 @@ describe('Squeeze', () => {
 
     describe('subscription()', () => {
 
-        it('converts *, null, undefined, 0, and false to an empty array, indicating all tags are acceptable', { plan: 5 }, (done) => {
+        it('converts *, null, undefined, 0, and false to an empty include/exclude array, indicating all tags are acceptable', { plan: 5 }, (done) => {
 
             const tags = ['*', null, undefined, false, 0];
             for (let i = 0; i < tags.length; ++i) {
 
                 const result = Squeeze.subscription({ error: tags[i] });
 
-                expect(result.error).to.deep.equal([]);
+                expect(result.error).to.deep.equal({
+                    include: [],
+                    exclude: []
+                });
             }
             done();
         });
@@ -43,14 +46,17 @@ describe('Squeeze', () => {
         it('converts a single tag to an array', { plan: 1 }, (done) => {
 
             const result = Squeeze.subscription({ error: 'hapi' });
-            expect(result.error).to.deep.equal(['hapi']);
+            expect(result.error).to.deep.equal({
+                include: ['hapi'],
+                exclude: []
+            });
             done();
         });
     });
 
     describe('filter()', () => {
 
-        it('returns true if this reporter should report this event type', { plan: 1 }, (done) => {
+        it('returns true if this reporter should report this event type (array)', { plan: 1 }, (done) => {
 
             const subscription = Squeeze.subscription({ log: '*' });
             expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'error', 'hapi'] })).to.be.true();
@@ -96,6 +102,29 @@ describe('Squeeze', () => {
 
             const subscription = Squeeze.subscription({ request: 'hapi' });
             expect(Squeeze.filter(subscription, { event: 'request', tags: 'hapi' })).to.be.false();
+            done();
+        });
+
+        it('returns true if this reporter should report this event type (advanced)', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ log: { include: '*' } });
+            expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'hapi', 'debug'] })).to.be.true();
+            done();
+        });
+
+        it('returns false if this reporter should not report this event with both include and exclude tags defined', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ log: { include: 'request', exclude: 'debug' } });
+            expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'hapi', 'debug'] })).to.be.false();
+
+            done();
+        });
+
+        it('returns false if this reporter should not report this event with exclude tags defined', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ log: { exclude: 'debug' } });
+            expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'hapi', 'debug'] })).to.be.false();
+
             done();
         });
     });
