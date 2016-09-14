@@ -28,7 +28,7 @@ describe('Squeeze', () => {
 
     describe('subscription()', () => {
 
-        it('converts *, null, undefined, 0, and false to an empty include/exclude array, indicating all tags are acceptable', { plan: 5 }, (done) => {
+        it('converts *, null, undefined, 0, and false to an empty include/exclude object, indicating all tags are acceptable', { plan: 5 }, (done) => {
 
             const tags = ['*', null, undefined, false, 0];
             for (let i = 0; i < tags.length; ++i) {
@@ -43,7 +43,7 @@ describe('Squeeze', () => {
             done();
         });
 
-        it('converts a single tag to an array', { plan: 1 }, (done) => {
+        it('converts a single tag to an include/exclude object', { plan: 1 }, (done) => {
 
             const result = Squeeze.subscription({ error: 'hapi' });
             expect(result.error).to.deep.equal({
@@ -56,7 +56,7 @@ describe('Squeeze', () => {
 
     describe('filter()', () => {
 
-        it('returns true if this reporter should report this event type (array)', { plan: 1 }, (done) => {
+        it('returns true if this reporter should report this event type', { plan: 1 }, (done) => {
 
             const subscription = Squeeze.subscription({ log: '*' });
             expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'error', 'hapi'] })).to.be.true();
