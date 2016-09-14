@@ -52,6 +52,16 @@ describe('Squeeze', () => {
             });
             done();
         });
+
+        it('adds excluded tags to exclude array in map', (done) => {
+
+            const result = Squeeze.subscription({ error: { exclude: ['sensitive'] } });
+            expect(result.error).to.deep.equal({
+                include: [],
+                exclude: ['sensitive']
+            });
+            done();
+        });
     });
 
     describe('filter()', () => {
