@@ -147,6 +147,14 @@ describe('Squeeze', () => {
 
             done();
         });
+
+        it('returns true if this reporter should report this event with only exclude tags defined', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ log: { exclude: 'debug' } });
+            expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'hapi'] })).to.be.true();
+
+            done();
+        });
     });
 
     it('does not forward events if "filter()" is false', { plan: 1 }, (done) => {
