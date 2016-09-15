@@ -28,22 +28,48 @@ describe('Squeeze', () => {
 
     describe('subscription()', () => {
 
-        it('converts *, null, undefined, 0, and false to an empty array, indicating all tags are acceptable', { plan: 5 }, (done) => {
+        it('converts *, null, undefined, 0, and false to an empty include/exclude object, indicating all tags are acceptable', { plan: 5 }, (done) => {
 
             const tags = ['*', null, undefined, false, 0];
             for (let i = 0; i < tags.length; ++i) {
 
                 const result = Squeeze.subscription({ error: tags[i] });
 
-                expect(result.error).to.deep.equal([]);
+                expect(result.error).to.equal({
+                    include: [],
+                    exclude: []
+                });
             }
             done();
         });
 
-        it('converts a single tag to an array', { plan: 1 }, (done) => {
+        it('converts a single tag to an include/exclude object', { plan: 1 }, (done) => {
 
             const result = Squeeze.subscription({ error: 'hapi' });
-            expect(result.error).to.deep.equal(['hapi']);
+            expect(result.error).to.equal({
+                include: ['hapi'],
+                exclude: []
+            });
+            done();
+        });
+
+        it('converts an array to an include/exclude object', { plan: 1 }, (done) => {
+
+            const result = Squeeze.subscription({ error: ['hapi', 'error'] });
+            expect(result.error).to.equal({
+                include: ['hapi', 'error'],
+                exclude: []
+            });
+            done();
+        });
+
+        it('adds excluded tags to exclude array in map', (done) => {
+
+            const result = Squeeze.subscription({ error: { exclude: ['sensitive'] } });
+            expect(result.error).to.equal({
+                include: [],
+                exclude: ['sensitive']
+            });
             done();
         });
     });
@@ -98,6 +124,37 @@ describe('Squeeze', () => {
             expect(Squeeze.filter(subscription, { event: 'request', tags: 'hapi' })).to.be.false();
             done();
         });
+
+        it('returns true if this reporter should report this event type (advanced)', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ log: { include: '*' } });
+            expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'hapi', 'debug'] })).to.be.true();
+            done();
+        });
+
+        it('returns false if this reporter should not report this event with both include and exclude tags defined', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ log: { include: 'request', exclude: 'debug' } });
+            expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'hapi', 'debug'] })).to.be.false();
+
+            done();
+        });
+
+        it('returns false if this reporter should not report this event with exclude tags defined', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ log: { exclude: 'debug' } });
+            expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'hapi', 'debug'] })).to.be.false();
+
+            done();
+        });
+
+        it('returns true if this reporter should report this event with only exclude tags defined', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ log: { exclude: 'debug' } });
+            expect(Squeeze.filter(subscription, { event: 'log', tags: ['request', 'server', 'hapi'] })).to.be.true();
+
+            done();
+        });
     });
 
     it('does not forward events if "filter()" is false', { plan: 1 }, (done) => {
@@ -112,7 +169,7 @@ describe('Squeeze', () => {
 
         stream.on('end', () => {
 
-            expect(result).to.deep.equal([{
+            expect(result).to.equal([{
                 event: 'request',
                 id: 1
             }]);
@@ -155,7 +212,7 @@ describe('Squeeze', () => {
             read.push({ event: 'request', id: 3 });
             read.push({ event: 'request', id: 4 });
 
-            expect(result).to.deep.equal([
+            expect(result).to.equal([
                 { event: 'request', id: 1 },
                 { event: 'request', id: 2 },
                 { event: 'request', id: 3 },
@@ -183,7 +240,7 @@ describe('Squeeze', () => {
 
         const stream = new Squeeze(null);
 
-        expect(stream._subscription).to.deep.equal(Object.create(null));
+        expect(stream._subscription).to.equal(Object.create(null));
         done();
     });
 });
@@ -208,7 +265,7 @@ describe('SafeJson', () => {
 
         stream.on('end', () => {
 
-            expect(result).to.equal('{"x":1,"y":"[Circular]"}\n{"foo":"bar"}\n');
+            expect(result).to.shallow.equal('{"x":1,"y":"[Circular]"}\n{"foo":"bar"}\n');
             done();
         });
 
@@ -232,7 +289,7 @@ describe('SafeJson', () => {
 
         stream.on('end', () => {
 
-            expect(result).to.equal('{"foo":"bar"}#{"bar":"baz"}#');
+            expect(result).to.shallow.equal('{"foo":"bar"}#{"bar":"baz"}#');
             done();
         });
 
