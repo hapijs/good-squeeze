@@ -10,14 +10,19 @@ Lead Maintainer: [Adam Bretz](https://github.com/arb)
 ## Usage
 
 good-squeeze is a collection of small transform streams. The `Squeeze` stream is useful for filtering events based on the good event options. The `SafeJson` stream is useful for stringifying objects to prevent circular object errors.
-
+    
 ## Methods
 
 ### `Squeeze(events, [options])`
 
 Creates a new Squeeze transform stream where:
 
-- `events` an object where each key is a valid good event, and the value is a string or array of strings representing event tags. "\*" indicates no filtering. `null` and `undefined` are assumed to be "\*". Defaults to `{}`
+- `events` an object where each key is a valid good event and the value is one of the following:
+    - `string` - a tag to include when filtering. '*' indicates no filtering.
+    - `array` - array of tags to filter. `[]` indicates no filtering.
+    - `object` - an object with the following values
+        - `include` - string or array representing tag(s) to *include* when filtering
+        - `exclude` - string or array representing tag(s) to *exclude* when filtering. `exclude` takes precedence over any `include` tags. 
 - `[options]` configuration object that gets passed to the Node [`Stream.Transform`](http://nodejs.org/api/stream.html#stream_class_stream_transform) constructor. **Note** `objectMode` is always `true` for all `Squeeze` objects.
 
 The transform stream only passes on events that satisfy the event filtering based on event name and tags. If the upstream event doesn't satisfy the filter, it is not continued down the pipe line.
@@ -37,7 +42,22 @@ Squeeze.subscription({ log: 'user', ops: '*', request: ['hapi', 'foo'] });
 // {
 //     log: [ 'user' ],
 //     ops: [],
-//     request: [ 'hapi', 'foo', 'hapi', 'foo' ]
+//     request: [ 'hapi', 'foo' ]
+// }
+
+Squeeze.subscription({ log: 'user', ops: { exclude: 'debug' }, request: { include: ['hapi', 'foo'], exclude: 'sensitive' } });
+
+// Results in
+// {
+//     log: [ 'user' ],
+//     ops: {
+//          include: [],
+//          exclude: [ 'debug' ]
+//     }
+//     request: {
+//          include: [ 'hapi', 'foo' ],
+//          exclude: [ 'sensitive' ]
+//     }
 // }
 ```
 
