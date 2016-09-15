@@ -10,7 +10,7 @@ Lead Maintainer: [Adam Bretz](https://github.com/arb)
 ## Usage
 
 good-squeeze is a collection of small transform streams. The `Squeeze` stream is useful for filtering events based on the good event options. The `SafeJson` stream is useful for stringifying objects to prevent circular object errors.
-    
+
 ## Methods
 
 ### `Squeeze(events, [options])`

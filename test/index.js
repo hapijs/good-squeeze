@@ -35,7 +35,7 @@ describe('Squeeze', () => {
 
                 const result = Squeeze.subscription({ error: tags[i] });
 
-                expect(result.error).to.deep.equal({
+                expect(result.error).to.equal({
                     include: [],
                     exclude: []
                 });
@@ -46,7 +46,7 @@ describe('Squeeze', () => {
         it('converts a single tag to an include/exclude object', { plan: 1 }, (done) => {
 
             const result = Squeeze.subscription({ error: 'hapi' });
-            expect(result.error).to.deep.equal({
+            expect(result.error).to.equal({
                 include: ['hapi'],
                 exclude: []
             });
@@ -56,7 +56,7 @@ describe('Squeeze', () => {
         it('converts an array to an include/exclude object', { plan: 1 }, (done) => {
 
             const result = Squeeze.subscription({ error: ['hapi', 'error'] });
-            expect(result.error).to.deep.equal({
+            expect(result.error).to.equal({
                 include: ['hapi', 'error'],
                 exclude: []
             });
@@ -66,7 +66,7 @@ describe('Squeeze', () => {
         it('adds excluded tags to exclude array in map', (done) => {
 
             const result = Squeeze.subscription({ error: { exclude: ['sensitive'] } });
-            expect(result.error).to.deep.equal({
+            expect(result.error).to.equal({
                 include: [],
                 exclude: ['sensitive']
             });
@@ -169,7 +169,7 @@ describe('Squeeze', () => {
 
         stream.on('end', () => {
 
-            expect(result).to.deep.equal([{
+            expect(result).to.equal([{
                 event: 'request',
                 id: 1
             }]);
@@ -212,7 +212,7 @@ describe('Squeeze', () => {
             read.push({ event: 'request', id: 3 });
             read.push({ event: 'request', id: 4 });
 
-            expect(result).to.deep.equal([
+            expect(result).to.equal([
                 { event: 'request', id: 1 },
                 { event: 'request', id: 2 },
                 { event: 'request', id: 3 },
@@ -240,7 +240,7 @@ describe('Squeeze', () => {
 
         const stream = new Squeeze(null);
 
-        expect(stream._subscription).to.deep.equal(Object.create(null));
+        expect(stream._subscription).to.equal(Object.create(null));
         done();
     });
 });
@@ -265,7 +265,7 @@ describe('SafeJson', () => {
 
         stream.on('end', () => {
 
-            expect(result).to.equal('{"x":1,"y":"[Circular]"}\n{"foo":"bar"}\n');
+            expect(result).to.shallow.equal('{"x":1,"y":"[Circular]"}\n{"foo":"bar"}\n');
             done();
         });
 
@@ -289,7 +289,7 @@ describe('SafeJson', () => {
 
         stream.on('end', () => {
 
-            expect(result).to.equal('{"foo":"bar"}#{"bar":"baz"}#');
+            expect(result).to.shallow.equal('{"foo":"bar"}#{"bar":"baz"}#');
             done();
         });
 

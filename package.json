@@ -23,11 +23,11 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "fast-safe-stringify": "1.0.9",
-    "hoek": "3.x.x"
+    "fast-safe-stringify": "1.1.0",
+    "hoek": "4.x.x"
   },
   "devDependencies": {
-    "code": "2.x.x",
-    "lab": "10.x.x"
+    "code": "3.x.x",
+    "lab": "11.x.x"
   }
 }
