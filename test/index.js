@@ -265,7 +265,7 @@ describe('SafeJson', () => {
 
         stream.on('end', () => {
 
-            expect(result).to.shallow.equal('{"x":1,"y":"[Circular]"}\n{"foo":"bar"}\n');
+            expect(result).to.equal('{"x":1,"y":"[Circular]"}\n{"foo":"bar"}\n');
             done();
         });
 
@@ -289,7 +289,7 @@ describe('SafeJson', () => {
 
         stream.on('end', () => {
 
-            expect(result).to.shallow.equal('{"foo":"bar"}#{"bar":"baz"}#');
+            expect(result).to.equal('{"foo":"bar"}#{"bar":"baz"}#');
             done();
         });
 
