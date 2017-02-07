@@ -140,6 +140,27 @@ describe('Squeeze', () => {
             done();
         });
 
+        it('returns false if this reporter should not report this event type (exclude "*")', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ request: { exclude: '*' } });
+            expect(Squeeze.filter(subscription, { event: 'request', tags: ['request', 'server', 'hapi', 'debug'] })).to.be.false();
+            done();
+        });
+
+        it('returns false if this reporter should not report this event type (exclude "*"), but the event has no tags', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ request: { exclude: '*' } });
+            expect(Squeeze.filter(subscription, { event: 'request' })).to.be.false();
+            done();
+        });
+
+        it('returns true if a different event excludes *, but this event matches and is included', { plan: 1 }, (done) => {
+
+            const subscription = Squeeze.subscription({ request: '*', log: { exclude: '*' } });
+            expect(Squeeze.filter(subscription, { event: 'request' })).to.be.true();
+            done();
+        });
+
         it('returns false if this reporter should not report this event with exclude tags defined', { plan: 1 }, (done) => {
 
             const subscription = Squeeze.subscription({ log: { exclude: 'debug' } });
