@@ -6,6 +6,7 @@ const Stream = require('stream');
 
 const Code = require('code');
 const Lab = require('lab');
+const Boom = require('boom');
 
 const Squeeze = require('..').Squeeze;
 const SafeJson = require('..').SafeJson;
@@ -353,6 +354,29 @@ describe('SafeJson', () => {
 
         read.push('test-0');
         read.push('test-1');
+        read.push(null);
+    });
+
+    it('serializes incoming boom objects', { plan: 1 }, (done) => {
+
+        let result = '';
+        const stream = new SafeJson({}, { separator: '#' });
+        const read = internals.readStream();
+
+        stream.on('data', (data) => {
+
+            result += data;
+        });
+
+        stream.on('end', () => {
+
+            expect(result).to.equal('{"isBoom":true,"isServer":true,"output":{"statusCode":500,"payload":{"statusCode":500,"error":"Internal Server Error","message":"An internal server error occurred"},"headers":{}},"isDeveloperError":true}#' );
+            done();
+        });
+
+        read.pipe(stream);
+
+        read.push(Boom.badImplementation('test-message'));
         read.push(null);
     });
 });
