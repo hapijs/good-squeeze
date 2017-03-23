@@ -6,6 +6,7 @@ const Stream = require('stream');
 
 const Code = require('code');
 const Lab = require('lab');
+const Boom = require('boom');
 
 const Squeeze = require('..').Squeeze;
 const SafeJson = require('..').SafeJson;
@@ -284,7 +285,7 @@ describe('SafeJson', () => {
         read.push(null);
     });
 
-    it('adds a seperator value when specified', { plan: 1 }, (done) => {
+    it('adds a separator value when specified', { plan: 1 }, (done) => {
 
         let result = '';
         const stream = new SafeJson({}, { separator: '#' });
@@ -305,6 +306,77 @@ describe('SafeJson', () => {
 
         read.push({ foo: 'bar' });
         read.push({ bar: 'baz' });
+        read.push(null);
+    });
+
+    it('serializes incoming buffer data', { plan: 1 }, (done) => {
+
+        let result = '';
+        const stream = new SafeJson({}, { separator: '#' });
+        const read = internals.readStream();
+
+        stream.on('data', (data) => {
+
+            result += data;
+        });
+
+        stream.on('end', () => {
+
+            expect(result).to.equal('{\"type\":\"Buffer\",\"data\":[116,101,115,116,45,48]}#{\"type\":\"Buffer\",\"data\":[116,101,115,116,45,49]}#');
+            done();
+        });
+
+        read.pipe(stream);
+
+        read.push(new Buffer('test-0'));
+        read.push(new Buffer('test-1'));
+        read.push(null);
+    });
+
+    it('serializes incoming string data', { plan: 1 }, (done) => {
+
+        let result = '';
+        const stream = new SafeJson({}, { separator: '#' });
+        const read = internals.readStream();
+
+        stream.on('data', (data) => {
+
+            result += data;
+        });
+
+        stream.on('end', () => {
+
+            expect(result).to.equal('"test-0"#"test-1"#');
+            done();
+        });
+
+        read.pipe(stream);
+
+        read.push('test-0');
+        read.push('test-1');
+        read.push(null);
+    });
+
+    it('serializes incoming boom objects', { plan: 1 }, (done) => {
+
+        let result = '';
+        const stream = new SafeJson({}, { separator: '#' });
+        const read = internals.readStream();
+
+        stream.on('data', (data) => {
+
+            result += data;
+        });
+
+        stream.on('end', () => {
+
+            expect(result).to.equal('{"isBoom":true,"isServer":true,"output":{"statusCode":500,"payload":{"statusCode":500,"error":"Internal Server Error","message":"An internal server error occurred"},"headers":{}},"isDeveloperError":true}#' );
+            done();
+        });
+
+        read.pipe(stream);
+
+        read.push(Boom.badImplementation('test-message'));
         read.push(null);
     });
 });
