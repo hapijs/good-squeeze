@@ -74,5 +74,6 @@ Creates a new SafeJson transform stream where:
 - `[options]` configuration object that gets passed to the Node [`Stream.Transform`](http://nodejs.org/api/stream.html#stream_class_stream_transform) constructor. **Note** `objectMode` is always `true` for all `Squeeze` objects.
 - `[stringify]` configuration object for controlling how stringify is handled.
     - `separator` - string to append to each message. Defaults to "\n".
+    - `space` - number of spaces in pretty printed JSON. Doesn't pretty print when set to 0. Defaults to 0.
 
 The transform stream stringifys the incoming data and pipes it forward. It will not crash in the cases of circular references and will instead include a "~Circular" string in the result.
