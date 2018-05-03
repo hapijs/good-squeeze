@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "fast-safe-stringify": "2.0.x",
-    "hoek": "4.x.x"
+    "hoek": "4.2.x"
   },
   "devDependencies": {
     "boom": "4.x.x",
