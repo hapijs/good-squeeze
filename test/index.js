@@ -285,6 +285,29 @@ describe('SafeJson', () => {
         read.push(null);
     });
 
+    it('pretty print JSON with space when specified', { plan: 1 }, (done) => {
+
+        let result = '';
+        const stream = new SafeJson({}, { space: 2 });
+        const read = internals.readStream();
+
+        stream.on('data', (data) => {
+
+            result += data;
+        });
+
+        stream.on('end', () => {
+
+            expect(result).to.equal('{\n  "foo": "bar"\n}\n');
+            done();
+        });
+
+        read.pipe(stream);
+
+        read.push({ foo: 'bar' });
+        read.push(null);
+    });
+
     it('adds a separator value when specified', { plan: 1 }, (done) => {
 
         let result = '';
