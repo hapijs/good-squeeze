@@ -5,7 +5,7 @@ Simple transform streams useful in creating [good](https://github.com/hapijs/goo
 [![Build Status](https://travis-ci.org/hapijs/good-squeeze.svg?branch=master&style=flat)](https://travis-ci.org/hapijs/good-squeeze)
 ![Current Version](https://img.shields.io/npm/v/good-squeeze.svg?style=flat)
 
-Lead Maintainer: [Adam Bretz](https://github.com/arb)
+Lead Maintainer: [Open Position](https://github.com/hapijs/good-squeeze/issues/29)
 
 ## Usage
 
