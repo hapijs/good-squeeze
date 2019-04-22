@@ -1,10 +1,16 @@
 {
   "name": "@hapi/good-squeeze",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "Collection of utility transform streams.",
   "repository": "https://github.com/hapijs/good-squeeze.git",
   "main": "lib/index.js",
-  "keywords": ["good", "good-reporter", "transform-stream", "filtering", "stream"],
+  "keywords": [
+    "good",
+    "good-reporter",
+    "transform-stream",
+    "filtering",
+    "stream"
+  ],
   "dependencies": {
     "@hapi/hoek": "6.x.x",
     "fast-safe-stringify": "2.x.x"
