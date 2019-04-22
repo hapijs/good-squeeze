@@ -1,34 +1,22 @@
 {
-  "name": "good-squeeze",
+  "name": "@hapi/good-squeeze",
   "version": "5.1.0",
   "description": "Collection of utility transform streams.",
+  "repository": "https://github.com/hapijs/good-squeeze.git",
   "main": "lib/index.js",
-  "keywords": [
-    "good",
-    "good-reporter",
-    "transform-stream",
-    "filtering",
-    "stream"
-  ],
-  "scripts": {
-    "test": "lab -m 5000 -t 100 -v -La code"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hapijs/good-squeeze.git"
-  },
-  "license": "BSD-3-Clause",
-  "homepage": "https://github.com/hapijs/good-squeeze",
-  "engines": {
-    "node": ">=4.0.0"
-  },
+  "keywords": ["good", "good-reporter", "transform-stream", "filtering", "stream"],
   "dependencies": {
-    "fast-safe-stringify": "2.0.x",
-    "hoek": "4.2.x"
+    "@hapi/hoek": "6.x.x",
+    "fast-safe-stringify": "2.x.x"
   },
   "devDependencies": {
-    "boom": "4.x.x",
-    "code": "3.x.x",
-    "lab": "11.x.x"
-  }
+    "@hapi/boom": "7.x.x",
+    "@hapi/code": "5.x.x",
+    "@hapi/lab": "18.x.x",
+    "@hapi/teamwork": "3.x.x"
+  },
+  "scripts": {
+    "test": "lab -m 5000 -t 100 -L -a @hapi/code"
+  },
+  "license": "BSD-3-Clause"
 }
