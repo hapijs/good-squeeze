@@ -7,7 +7,7 @@ const Code = require('@hapi/code');
 const GoodSqueeze = require('..');
 const Hoek = require('@hapi/hoek');
 const Lab = require('@hapi/lab');
-const Teamwork = require('teamwork');
+const Teamwork = require('@hapi/teamwork');
 
 
 const { describe, it } = exports.lab = Lab.script();
