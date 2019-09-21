@@ -5,9 +5,8 @@
 Simple transform streams useful in creating [good](https://github.com/hapijs/good) data pipelines.
 
 [![Build Status](https://travis-ci.org/hapijs/good-squeeze.svg?branch=master&style=flat)](https://travis-ci.org/hapijs/good-squeeze)
-![Current Version](https://img.shields.io/npm/v/good-squeeze.svg?style=flat)
 
-Lead Maintainer: [Open Position](https://github.com/hapijs/good-squeeze/issues/29)
+## Note: this module is being deprecated on December 1st, 2019 due to lack to available support resources. Please consider using [another logging plugin](https://hapi.dev/plugins/#logging).
 
 ## Usage
 
