@@ -1,6 +1,6 @@
 {
   "name": "@hapi/good-squeeze",
-  "version": "5.2.1",
+  "version": "6.0.0",
   "description": "Collection of utility transform streams.",
   "repository": "https://github.com/hapijs/good-squeeze.git",
   "main": "lib/index.js",
