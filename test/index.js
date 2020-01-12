@@ -29,7 +29,7 @@ describe('Squeeze', () => {
             result.push(data);
         });
 
-        const team = new Teamwork();
+        const team = new Teamwork.Team();
         stream.on('end', () => {
 
             expect(result).to.equal([{
@@ -242,7 +242,7 @@ describe('SafeJson', () => {
             result += data;
         });
 
-        const team = new Teamwork();
+        const team = new Teamwork.Team();
         stream.on('end', () => {
 
             expect(result).to.equal('{"x":1,"y":"[Circular]"}\n{"foo":"bar"}\n');
@@ -269,7 +269,7 @@ describe('SafeJson', () => {
             result += data;
         });
 
-        const team = new Teamwork();
+        const team = new Teamwork.Team();
         stream.on('end', () => {
 
             expect(result).to.equal('{\n  "foo": "bar"\n}\n');
@@ -294,7 +294,7 @@ describe('SafeJson', () => {
             result += data;
         });
 
-        const team = new Teamwork();
+        const team = new Teamwork.Team();
         stream.on('end', () => {
 
             expect(result).to.equal('{"foo":"bar"}#{"bar":"baz"}#');
@@ -320,7 +320,7 @@ describe('SafeJson', () => {
             result += data;
         });
 
-        const team = new Teamwork();
+        const team = new Teamwork.Team();
         stream.on('end', () => {
 
             expect(result).to.equal('{\"type\":\"Buffer\",\"data\":[116,101,115,116,45,48]}#{\"type\":\"Buffer\",\"data\":[116,101,115,116,45,49]}#');
@@ -346,7 +346,7 @@ describe('SafeJson', () => {
             result += data;
         });
 
-        const team = new Teamwork();
+        const team = new Teamwork.Team();
         stream.on('end', () => {
 
             expect(result).to.equal('"test-0"#"test-1"#');
@@ -372,7 +372,7 @@ describe('SafeJson', () => {
             result += data;
         });
 
-        const team = new Teamwork();
+        const team = new Teamwork.Team();
         stream.on('end', () => {
 
             expect(result).to.equal('{"data":null,"isBoom":true,"isServer":true,"output":{"statusCode":500,"payload":{"statusCode":500,"error":"Internal Server Error","message":"An internal server error occurred"},"headers":{}},"isDeveloperError":true}#');
